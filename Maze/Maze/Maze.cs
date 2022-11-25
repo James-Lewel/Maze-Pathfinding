@@ -67,18 +67,22 @@ namespace Maze
             int column = int.Parse(textBox_column.Text);
             column = column > 0 ? column : 1;
 
-            // Resets all properties in table layout panel
-            mazeGrid.Controls.Clear();
-            mazeGrid.RowStyles.Clear();
-            mazeGrid.ColumnStyles.Clear();
-            mazeGrid.Enabled = true;
-
             // Resets position
             startCellPosition = null;
             endCellPosition = null;
 
             mazeHelper.DrawMaze(mazeGrid, () =>
             {
+                // Resets all properties in table layout panel
+                mazeGrid.RowStyles.Clear();
+                mazeGrid.ColumnStyles.Clear();
+                mazeGrid.Enabled = true;
+
+                for (int i = mazeGrid.Controls.Count - 1; i >= 0; --i)
+                {
+                    mazeGrid.Controls[i].Dispose();
+                }
+
                 // Adds row to table layout panel
                 // Adds column to table layout panel
                 mazeGrid.RowCount = row;
