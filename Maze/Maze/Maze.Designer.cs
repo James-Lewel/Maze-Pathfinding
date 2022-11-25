@@ -31,12 +31,16 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.mazeGrid = new System.Windows.Forms.TableLayoutPanel();
             this.generateButton = new System.Windows.Forms.Button();
-            this.solveButton = new System.Windows.Forms.Button();
+            this.generateMazeButton = new System.Windows.Forms.Button();
             this.label_row = new System.Windows.Forms.Label();
             this.label_column = new System.Windows.Forms.Label();
             this.textBox_row = new System.Windows.Forms.TextBox();
             this.textBox_column = new System.Windows.Forms.TextBox();
             this.label_ownership = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.manualRadioButton = new System.Windows.Forms.RadioButton();
+            this.randomRadioButton = new System.Windows.Forms.RadioButton();
+            this.label1 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,6 +49,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.BackColor = System.Drawing.SystemColors.Window;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.mazeGrid);
             this.panel1.Location = new System.Drawing.Point(12, 12);
@@ -83,21 +88,21 @@
             this.generateButton.Name = "generateButton";
             this.generateButton.Size = new System.Drawing.Size(129, 23);
             this.generateButton.TabIndex = 1;
-            this.generateButton.Text = "Generate Maze";
+            this.generateButton.Text = "Generate Grid";
             this.generateButton.UseVisualStyleBackColor = true;
-            this.generateButton.Click += new System.EventHandler(this.generateButton_Click);
+            this.generateButton.Click += new System.EventHandler(this.generateGridButton_Click);
             // 
-            // solveButton
+            // generateMazeButton
             // 
-            this.solveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.generateMazeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.solveButton.Location = new System.Drawing.Point(643, 126);
-            this.solveButton.Name = "solveButton";
-            this.solveButton.Size = new System.Drawing.Size(129, 23);
-            this.solveButton.TabIndex = 1;
-            this.solveButton.Text = "Solve Maze";
-            this.solveButton.UseVisualStyleBackColor = true;
+            this.generateMazeButton.Location = new System.Drawing.Point(643, 185);
+            this.generateMazeButton.Name = "generateMazeButton";
+            this.generateMazeButton.Size = new System.Drawing.Size(129, 23);
+            this.generateMazeButton.TabIndex = 1;
+            this.generateMazeButton.Text = "Generate Maze";
+            this.generateMazeButton.UseVisualStyleBackColor = true;
             // 
             // label_row
             // 
@@ -148,13 +153,70 @@
             // 
             // label_ownership
             // 
+            this.label_ownership.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label_ownership.AutoSize = true;
-            this.label_ownership.Location = new System.Drawing.Point(643, 510);
+            this.label_ownership.Location = new System.Drawing.Point(649, 510);
             this.label_ownership.Name = "label_ownership";
             this.label_ownership.Size = new System.Drawing.Size(123, 39);
             this.label_ownership.TabIndex = 4;
             this.label_ownership.Text = "Created by: \r\nJames Lewel T. Padecio\r\nBSCS - 3";
             this.label_ownership.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(643, 214);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(129, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Solve Maze";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // manualRadioButton
+            // 
+            this.manualRadioButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.manualRadioButton.AutoSize = true;
+            this.manualRadioButton.Location = new System.Drawing.Point(652, 139);
+            this.manualRadioButton.Name = "manualRadioButton";
+            this.manualRadioButton.Size = new System.Drawing.Size(90, 17);
+            this.manualRadioButton.TabIndex = 5;
+            this.manualRadioButton.TabStop = true;
+            this.manualRadioButton.Text = "Manual Mode";
+            this.manualRadioButton.UseVisualStyleBackColor = true;
+            this.manualRadioButton.Click += new System.EventHandler(this.manualRadioButton_Click);
+            // 
+            // randomRadioButton
+            // 
+            this.randomRadioButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.randomRadioButton.AutoSize = true;
+            this.randomRadioButton.Location = new System.Drawing.Point(652, 162);
+            this.randomRadioButton.Name = "randomRadioButton";
+            this.randomRadioButton.Size = new System.Drawing.Size(95, 17);
+            this.randomRadioButton.TabIndex = 5;
+            this.randomRadioButton.TabStop = true;
+            this.randomRadioButton.Text = "Random Mode";
+            this.randomRadioButton.UseVisualStyleBackColor = true;
+            this.randomRadioButton.Click += new System.EventHandler(this.randomRadioButton_Click);
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(640, 123);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(92, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Generation Mode:";
             // 
             // Maze
             // 
@@ -162,12 +224,16 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.randomRadioButton);
+            this.Controls.Add(this.manualRadioButton);
             this.Controls.Add(this.label_ownership);
             this.Controls.Add(this.textBox_column);
             this.Controls.Add(this.textBox_row);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.label_column);
             this.Controls.Add(this.label_row);
-            this.Controls.Add(this.solveButton);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.generateMazeButton);
             this.Controls.Add(this.generateButton);
             this.Controls.Add(this.panel1);
             this.Cursor = System.Windows.Forms.Cursors.Default;
@@ -188,13 +254,17 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button generateButton;
-        private System.Windows.Forms.Button solveButton;
+        private System.Windows.Forms.Button generateMazeButton;
         private System.Windows.Forms.TableLayoutPanel mazeGrid;
         private System.Windows.Forms.Label label_row;
         private System.Windows.Forms.Label label_column;
         private System.Windows.Forms.TextBox textBox_row;
         private System.Windows.Forms.TextBox textBox_column;
         private System.Windows.Forms.Label label_ownership;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.RadioButton manualRadioButton;
+        private System.Windows.Forms.RadioButton randomRadioButton;
+        private System.Windows.Forms.Label label1;
     }
 }
 

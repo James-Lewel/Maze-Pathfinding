@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper\PositionHelper.cs" />
     <Compile Include="Maze.cs">
       <SubType>Form</SubType>
     </Compile>
