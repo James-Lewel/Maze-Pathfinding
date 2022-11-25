@@ -2,13 +2,13 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace Maze
 {
     public partial class Maze : Form
     {
+        MazeHelper mazeHelper = new MazeHelper();
         PositionHelper positionHelper = new PositionHelper();
 
         Point? startCellPosition;
@@ -54,6 +54,7 @@ namespace Maze
 
         private void generateGridButton_Click(object sender, EventArgs e)
         {
+            // If true, sets default text to 0
             if (textBox_row.Text.Count() <= 0 || textBox_column.Text.Count() <= 0)
             {
                 textBox_row.Text = "0";
@@ -76,19 +77,22 @@ namespace Maze
             startCellPosition = null;
             endCellPosition = null;
 
-            // Adds row to table layout panel
-            // Adds column to table layout panel
-            mazeGrid.RowCount = row;
-            mazeGrid.ColumnCount = column;
-            for (int i = 0; i < row; i++)
+            mazeHelper.DrawMaze(mazeGrid, () =>
             {
-                mazeGrid.RowStyles.Add(new RowStyle(SizeType.Percent, .50f));
-                for (int j = 0; j < column; j++)
+                // Adds row to table layout panel
+                // Adds column to table layout panel
+                mazeGrid.RowCount = row;
+                mazeGrid.ColumnCount = column;
+                for (int i = 0; i < row; i++)
                 {
-                    mazeGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, .50f));
-                    mazeGrid.Controls.Add(new Panel { Dock = DockStyle.Fill, Enabled = false });
+                    mazeGrid.RowStyles.Add(new RowStyle(SizeType.Percent, .50f));
+                    for (int j = 0; j < column; j++)
+                    {
+                        mazeGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, .50f));
+                        mazeGrid.Controls.Add(new Panel { Dock = DockStyle.Fill, Enabled = false });
+                    }
                 }
-            }
+            });
 
             // Resets radio button
             manualRadioButton.Enabled = true;
@@ -107,7 +111,7 @@ namespace Maze
 
             // Gets cell position on mouse click
             var currentCellPosition = new Point(e.X / (mazeGrid.Width / mazeGrid.ColumnCount), 
-                                         e.Y / (mazeGrid.Height / mazeGrid.RowCount));
+                                                e.Y / (mazeGrid.Height / mazeGrid.RowCount));
 
             // Checks for mouse button
             switch (e.Button)
@@ -119,15 +123,15 @@ namespace Maze
                         endCellPosition = null;
                     }
 
-                    if (startCellPosition != currentCellPosition)
-                    {
-                        positionHelper.PlaceStart(mazeGrid, startCellPosition, currentCellPosition);
-                        startCellPosition = currentCellPosition;
-                    }
-                    else
+                    if (startCellPosition == currentCellPosition)
                     {
                         positionHelper.RemoveStart(mazeGrid, startCellPosition);
                         startCellPosition = null;
+                    }
+                    else
+                    {
+                        positionHelper.PlaceStart(mazeGrid, startCellPosition, currentCellPosition);
+                        startCellPosition = currentCellPosition;
                     }
                     break;
 
@@ -138,15 +142,15 @@ namespace Maze
                         startCellPosition = null;
                     }
 
-                    if (endCellPosition != currentCellPosition)
-                    {
-                        positionHelper.PlaceEnd(mazeGrid, endCellPosition, currentCellPosition);
-                        endCellPosition = currentCellPosition;
-                    }
-                    else
+                    if (endCellPosition == currentCellPosition)
                     {
                         positionHelper.RemoveEnd(mazeGrid, endCellPosition);
                         endCellPosition = null;
+                    }
+                    else
+                    {
+                        positionHelper.PlaceEnd(mazeGrid, endCellPosition, currentCellPosition);
+                        endCellPosition = currentCellPosition;
                     }
                     break;
             }
