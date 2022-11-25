@@ -31,11 +31,12 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.mazeGrid = new System.Windows.Forms.TableLayoutPanel();
             this.generateButton = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.solveButton = new System.Windows.Forms.Button();
             this.label_row = new System.Windows.Forms.Label();
             this.label_column = new System.Windows.Forms.Label();
             this.textBox_row = new System.Windows.Forms.TextBox();
             this.textBox_column = new System.Windows.Forms.TextBox();
+            this.label_ownership = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,6 +61,7 @@
             this.mazeGrid.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             this.mazeGrid.ColumnCount = 1;
             this.mazeGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.mazeGrid.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.mazeGrid.Location = new System.Drawing.Point(3, 3);
             this.mazeGrid.MaximumSize = new System.Drawing.Size(617, 529);
             this.mazeGrid.MinimumSize = new System.Drawing.Size(617, 529);
@@ -69,6 +71,8 @@
             this.mazeGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mazeGrid.Size = new System.Drawing.Size(617, 529);
             this.mazeGrid.TabIndex = 0;
+            this.mazeGrid.CellPaint += new System.Windows.Forms.TableLayoutCellPaintEventHandler(this.mazeGrid_CellPaint);
+            this.mazeGrid.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mazeGrid_MouseClick);
             // 
             // generateButton
             // 
@@ -83,17 +87,17 @@
             this.generateButton.UseVisualStyleBackColor = true;
             this.generateButton.Click += new System.EventHandler(this.generateButton_Click);
             // 
-            // button2
+            // solveButton
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.solveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(643, 126);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(129, 23);
-            this.button2.TabIndex = 1;
-            this.button2.Text = "Solve Maze";
-            this.button2.UseVisualStyleBackColor = true;
+            this.solveButton.Location = new System.Drawing.Point(643, 126);
+            this.solveButton.Name = "solveButton";
+            this.solveButton.Size = new System.Drawing.Size(129, 23);
+            this.solveButton.TabIndex = 1;
+            this.solveButton.Text = "Solve Maze";
+            this.solveButton.UseVisualStyleBackColor = true;
             // 
             // label_row
             // 
@@ -106,7 +110,6 @@
             this.label_row.Size = new System.Drawing.Size(34, 13);
             this.label_row.TabIndex = 2;
             this.label_row.Text = "Rows";
-            this.label_row.Click += new System.EventHandler(this.label1_Click);
             // 
             // label_column
             // 
@@ -119,7 +122,6 @@
             this.label_column.Size = new System.Drawing.Size(47, 13);
             this.label_column.TabIndex = 2;
             this.label_column.Text = "Columns";
-            this.label_column.Click += new System.EventHandler(this.label1_Click);
             // 
             // textBox_row
             // 
@@ -130,7 +132,6 @@
             this.textBox_row.Name = "textBox_row";
             this.textBox_row.Size = new System.Drawing.Size(129, 20);
             this.textBox_row.TabIndex = 3;
-            this.textBox_row.TextChanged += new System.EventHandler(this.textBox_row_TextChanged);
             this.textBox_row.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox_row_KeyPress);
             this.textBox_row.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBox_row_KeyUp);
             // 
@@ -145,17 +146,28 @@
             this.textBox_column.Size = new System.Drawing.Size(129, 20);
             this.textBox_column.TabIndex = 3;
             // 
+            // label_ownership
+            // 
+            this.label_ownership.AutoSize = true;
+            this.label_ownership.Location = new System.Drawing.Point(643, 510);
+            this.label_ownership.Name = "label_ownership";
+            this.label_ownership.Size = new System.Drawing.Size(123, 39);
+            this.label_ownership.TabIndex = 4;
+            this.label_ownership.Text = "Created by: \r\nJames Lewel T. Padecio\r\nBSCS - 3";
+            this.label_ownership.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // Maze
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(784, 561);
+            this.Controls.Add(this.label_ownership);
             this.Controls.Add(this.textBox_column);
             this.Controls.Add(this.textBox_row);
             this.Controls.Add(this.label_column);
             this.Controls.Add(this.label_row);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.solveButton);
             this.Controls.Add(this.generateButton);
             this.Controls.Add(this.panel1);
             this.Cursor = System.Windows.Forms.Cursors.Default;
@@ -176,12 +188,13 @@
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button generateButton;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button solveButton;
         private System.Windows.Forms.TableLayoutPanel mazeGrid;
         private System.Windows.Forms.Label label_row;
         private System.Windows.Forms.Label label_column;
         private System.Windows.Forms.TextBox textBox_row;
         private System.Windows.Forms.TextBox textBox_column;
+        private System.Windows.Forms.Label label_ownership;
     }
 }
 
