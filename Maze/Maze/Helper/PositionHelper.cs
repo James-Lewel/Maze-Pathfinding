@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace Maze.Helper
@@ -11,7 +6,8 @@ namespace Maze.Helper
     public class PositionHelper
     {
         Control control;
-        public void PlaceStart(TableLayoutPanel mazeGrid, Point? startCellPosition, Point currentCellPosition)
+
+        public void PlaceStart(TableLayoutPanel mazeGrid, Point? startCellPosition, Point? currentCellPosition)
         {
             // Remove start cell and color
             if (startCellPosition != null)
@@ -21,11 +17,11 @@ namespace Maze.Helper
             }
 
             // Place start cell and color
-            control = mazeGrid.GetControlFromPosition(currentCellPosition.X, currentCellPosition.Y);
+            control = mazeGrid.GetControlFromPosition(currentCellPosition.Value.X, currentCellPosition.Value.Y);
             control.BackColor = Color.Green;
         }
 
-        public void PlaceEnd(TableLayoutPanel mazeGrid, Point? endCellPosition, Point currentCellPosition)
+        public void PlaceEnd(TableLayoutPanel mazeGrid, Point? endCellPosition, Point? currentCellPosition)
         {
             // Remove end cell and color
             if (endCellPosition != null)
@@ -34,10 +30,10 @@ namespace Maze.Helper
                 control.BackColor = Color.White;
             }
 
+            // Place start cell and color
             if (currentCellPosition != endCellPosition)
             {
-                // Place start cell and color
-                control = mazeGrid.GetControlFromPosition(currentCellPosition.X, currentCellPosition.Y);
+                control = mazeGrid.GetControlFromPosition(currentCellPosition.Value.X, currentCellPosition.Value.Y);
                 control.BackColor = Color.Red;
             }
         }
