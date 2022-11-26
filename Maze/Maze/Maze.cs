@@ -2,17 +2,25 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Maze
 {
     public partial class Maze : Form
     {
+        // Helper classes
         MazeHelper mazeHelper = new MazeHelper();
         PositionHelper positionHelper = new PositionHelper();
 
+        // Maze Points position
         Point? startCellPosition;
         Point? endCellPosition;
+
+        // Maze Rows x Columns
+        int row;
+        int column;
 
         bool isManualMode = true;
 
@@ -20,8 +28,7 @@ namespace Maze
         {
             InitializeComponent();
 
-            // Temporarily disables maze grid
-            mazeGrid.Enabled = false;
+            this.DoubleBuffered = true;
 
             // Sets default & temporarily disable radio buttons
             manualRadioButton.Checked = true;
@@ -54,6 +61,9 @@ namespace Maze
 
         private void generateGridButton_Click(object sender, EventArgs e)
         {
+            // Disables button
+            generateGridButton.Enabled = false;
+
             // If true, sets default text to 0
             if (textBox_row.Text.Count() <= 0 || textBox_column.Text.Count() <= 0)
             {
@@ -61,49 +71,73 @@ namespace Maze
                 textBox_column.Text = "0";
             }
 
-            int row = int.Parse(textBox_row.Text);
+            row = int.Parse(textBox_row.Text);
             row = row > 0 ? row : 1;
 
-            int column = int.Parse(textBox_column.Text);
+            column = int.Parse(textBox_column.Text);
             column = column > 0 ? column : 1;
 
             // Resets position
             startCellPosition = null;
             endCellPosition = null;
 
-            mazeHelper.DrawMaze(mazeGrid, () =>
+            // Creates a separate thread
+            mazeHelper.DrawMaze(mazeGrid, async () =>
             {
+                // Sets progress bar values
+                progressBar.Value = 0;
+                progressBar.Minimum = 0;
+                progressBar.Maximum = (row * column) + mazeGrid.Controls.Count;
+                progressBar.Visible = true;
+                progressBar.Style = ProgressBarStyle.Continuous;
+
                 // Resets all properties in table layout panel
                 mazeGrid.RowStyles.Clear();
                 mazeGrid.ColumnStyles.Clear();
                 mazeGrid.Enabled = true;
 
+                // Removes all controls
                 for (int i = mazeGrid.Controls.Count - 1; i >= 0; --i)
                 {
                     mazeGrid.Controls[i].Dispose();
+                    
+                    // Show progress
+                    progressBar.Value++;
                 }
 
-                // Adds row to table layout panel
-                // Adds column to table layout panel
                 mazeGrid.RowCount = row;
                 mazeGrid.ColumnCount = column;
                 for (int i = 0; i < row; i++)
                 {
+                    // Adds row to table layout panel
                     mazeGrid.RowStyles.Add(new RowStyle(SizeType.Percent, .50f));
                     for (int j = 0; j < column; j++)
                     {
+                        // Adds column to table layout panel
                         mazeGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, .50f));
+
+                        // Adds control to table cells
                         mazeGrid.Controls.Add(new Panel { Dock = DockStyle.Fill, Enabled = false });
+
+                        // Show progress
+                        progressBar.Value++;
                     }
                 }
+
+                // Resets progress bar values
+                progressBar.Visible = false;
+
+                // Enables button
+                generateGridButton.Enabled = true;
+                manualRadioButton.Enabled = true;
+                randomRadioButton.Enabled = true;
+
+                // Sets radio button properties
+                isManualMode = true;
+                manualRadioButton.Checked = true;
+                randomRadioButton.Checked = false;
             });
 
-            // Resets radio button
-            manualRadioButton.Enabled = true;
-            manualRadioButton.Checked = true;
-            isManualMode = true;
-            randomRadioButton.Enabled = true;
-            randomRadioButton.Checked = false;
         }
 
         private void mazeGrid_MouseClick(object sender, MouseEventArgs e)
@@ -127,11 +161,13 @@ namespace Maze
                         endCellPosition = null;
                     }
 
+                    // Removes start position if clicked on end position
                     if (startCellPosition == currentCellPosition)
                     {
                         positionHelper.RemoveStart(mazeGrid, startCellPosition);
                         startCellPosition = null;
                     }
+                    // Adds start position
                     else
                     {
                         positionHelper.PlaceStart(mazeGrid, startCellPosition, currentCellPosition);
@@ -146,11 +182,13 @@ namespace Maze
                         startCellPosition = null;
                     }
 
+                    // Removes end position if clicked on end position
                     if (endCellPosition == currentCellPosition)
                     {
                         positionHelper.RemoveEnd(mazeGrid, endCellPosition);
                         endCellPosition = null;
                     }
+                    // Adds end position
                     else
                     {
                         positionHelper.PlaceEnd(mazeGrid, endCellPosition, currentCellPosition);
