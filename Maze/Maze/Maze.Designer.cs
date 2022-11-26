@@ -254,7 +254,6 @@
             this.Name = "Maze";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Maze - A CS345 Project";
-            this.Load += new System.EventHandler(this.Maze_Load);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

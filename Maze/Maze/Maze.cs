@@ -2,8 +2,6 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Maze
@@ -36,11 +34,6 @@ namespace Maze
             randomRadioButton.Enabled = false;
         }
 
-        private void Maze_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void textBox_row_KeyPress(object sender, KeyPressEventArgs e)
         {
             // Checks if input is letter
@@ -71,9 +64,9 @@ namespace Maze
                 textBox_column.Text = "0";
             }
 
+            // Sets rows/columns
             row = int.Parse(textBox_row.Text);
             row = row > 0 ? row : 1;
-
             column = int.Parse(textBox_column.Text);
             column = column > 0 ? column : 1;
 
@@ -208,6 +201,26 @@ namespace Maze
         {
             manualRadioButton.Checked = false;
             isManualMode = false;
+
+            Point? randomStartCellPosition = null;
+            Point? randomEndCellPosition = null;
+
+            // Generates random point for start/end
+            while (randomStartCellPosition == randomEndCellPosition)
+            {
+                randomStartCellPosition = mazeHelper.GeneratePoint(row, column);
+                randomEndCellPosition = mazeHelper.GeneratePoint(row, column);
+            }    
+
+            // Applies color to cell
+            positionHelper.RemoveStart(mazeGrid, startCellPosition);
+            positionHelper.RemoveEnd(mazeGrid, endCellPosition);
+            positionHelper.PlaceStart(mazeGrid, startCellPosition, randomStartCellPosition);
+            positionHelper.PlaceEnd(mazeGrid, endCellPosition, randomEndCellPosition);
+
+            // Sets new value for start/end
+            startCellPosition = randomStartCellPosition;
+            endCellPosition = randomEndCellPosition;
         }
 
         private void mazeGrid_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
