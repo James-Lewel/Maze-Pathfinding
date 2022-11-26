@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,12 +19,13 @@ namespace Maze.Helper
             const int WM_SETREDRAW = 0x000B;
             try
             {
-                control.Refresh();
+                // Disables drawing
                 SendMessage(control.Handle, WM_SETREDRAW, false, 0);
                 action();
             }
             finally
             {
+                // Enables drawing
                 SendMessage(control.Handle, WM_SETREDRAW, true, 0);
                 control.Refresh();
             }
