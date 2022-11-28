@@ -13,7 +13,7 @@ namespace Maze.Helper
             if (startCellPosition != null)
             {
                 control = mazeGrid.GetControlFromPosition(startCellPosition.Value.X, startCellPosition.Value.Y);
-                control.BackColor = Color.White;
+                control.BackColor = Color.DimGray;
             }
 
             // Place start cell and color
@@ -27,15 +27,12 @@ namespace Maze.Helper
             if (endCellPosition != null)
             {
                 control = mazeGrid.GetControlFromPosition(endCellPosition.Value.X, endCellPosition.Value.Y);
-                control.BackColor = Color.White;
+                control.BackColor = Color.DimGray;
             }
 
             // Place start cell and color
-            if (currentCellPosition != endCellPosition)
-            {
-                control = mazeGrid.GetControlFromPosition(currentCellPosition.Value.X, currentCellPosition.Value.Y);
-                control.BackColor = Color.Red;
-            }
+            control = mazeGrid.GetControlFromPosition(currentCellPosition.Value.X, currentCellPosition.Value.Y);
+            control.BackColor = Color.Red;
         }
 
         public void RemoveStart(TableLayoutPanel mazeGrid, Point? startCellPosition)
@@ -44,7 +41,7 @@ namespace Maze.Helper
             if (startCellPosition != null)
             {
                 control = mazeGrid.GetControlFromPosition(startCellPosition.Value.X, startCellPosition.Value.Y);
-                control.BackColor = Color.White;
+                control.BackColor = Color.DimGray;
             }
         }
 
@@ -54,7 +51,7 @@ namespace Maze.Helper
             if (endCellPosition != null)
             {
                 control = mazeGrid.GetControlFromPosition(endCellPosition.Value.X, endCellPosition.Value.Y);
-                control.BackColor = Color.White;
+                control.BackColor = Color.DimGray;
             }
         }
     }

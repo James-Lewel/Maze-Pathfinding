@@ -1,4 +1,6 @@
-﻿namespace Maze
+﻿using System.Drawing;
+
+namespace Maze
 {
     partial class Maze
     {
@@ -42,6 +44,9 @@
             this.randomRadioButton = new System.Windows.Forms.RadioButton();
             this.label_generationMode = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.startLabel = new System.Windows.Forms.Label();
+            this.endLabel = new System.Windows.Forms.Label();
+            this.currentPathLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -64,6 +69,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.mazeGrid.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.mazeGrid.BackColor = System.Drawing.Color.DimGray;
             this.mazeGrid.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             this.mazeGrid.ColumnCount = 1;
             this.mazeGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -79,7 +85,10 @@
             this.mazeGrid.Size = new System.Drawing.Size(617, 529);
             this.mazeGrid.TabIndex = 0;
             this.mazeGrid.CellPaint += new System.Windows.Forms.TableLayoutCellPaintEventHandler(this.mazeGrid_CellPaint);
+            this.mazeGrid.Paint += new System.Windows.Forms.PaintEventHandler(this.mazeGrid_Paint);
             this.mazeGrid.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mazeGrid_MouseClick);
+            this.mazeGrid.MouseLeave += new System.EventHandler(this.mazeGrid_MouseLeave);
+            this.mazeGrid.MouseHover += new System.EventHandler(this.mazeGrid_MouseHover);
             // 
             // generateGridButton
             // 
@@ -105,6 +114,7 @@
             this.generateMazeButton.TabIndex = 1;
             this.generateMazeButton.Text = "Generate Maze";
             this.generateMazeButton.UseVisualStyleBackColor = true;
+            this.generateMazeButton.Click += new System.EventHandler(this.generateMazeButton_Click);
             // 
             // label_row
             // 
@@ -177,6 +187,7 @@
             this.solveButton.TabIndex = 1;
             this.solveButton.Text = "Solve Maze";
             this.solveButton.UseVisualStyleBackColor = true;
+            this.solveButton.Click += new System.EventHandler(this.solveButton_Click);
             // 
             // manualRadioButton
             // 
@@ -222,11 +233,47 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(643, 256);
+            this.progressBar.Location = new System.Drawing.Point(643, 282);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(129, 23);
             this.progressBar.TabIndex = 6;
             this.progressBar.Visible = false;
+            // 
+            // startLabel
+            // 
+            this.startLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.startLabel.AutoSize = true;
+            this.startLabel.Location = new System.Drawing.Point(643, 240);
+            this.startLabel.Name = "startLabel";
+            this.startLabel.Size = new System.Drawing.Size(75, 13);
+            this.startLabel.TabIndex = 2;
+            this.startLabel.Text = "Start Position :";
+            // 
+            // endLabel
+            // 
+            this.endLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.endLabel.AutoSize = true;
+            this.endLabel.Location = new System.Drawing.Point(643, 253);
+            this.endLabel.Name = "endLabel";
+            this.endLabel.Size = new System.Drawing.Size(72, 13);
+            this.endLabel.TabIndex = 2;
+            this.endLabel.Text = "End Position :";
+            // 
+            // currentPathLabel
+            // 
+            this.currentPathLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.currentPathLabel.AutoSize = true;
+            this.currentPathLabel.Location = new System.Drawing.Point(643, 266);
+            this.currentPathLabel.Name = "currentPathLabel";
+            this.currentPathLabel.Size = new System.Drawing.Size(72, 13);
+            this.currentPathLabel.TabIndex = 2;
+            this.currentPathLabel.Text = "Current Path :";
             // 
             // Maze
             // 
@@ -240,6 +287,9 @@
             this.Controls.Add(this.label_ownership);
             this.Controls.Add(this.textBox_column);
             this.Controls.Add(this.textBox_row);
+            this.Controls.Add(this.currentPathLabel);
+            this.Controls.Add(this.endLabel);
+            this.Controls.Add(this.startLabel);
             this.Controls.Add(this.label_generationMode);
             this.Controls.Add(this.label_column);
             this.Controls.Add(this.label_row);
@@ -276,6 +326,9 @@
         private System.Windows.Forms.RadioButton randomRadioButton;
         private System.Windows.Forms.Label label_generationMode;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label startLabel;
+        private System.Windows.Forms.Label endLabel;
+        private System.Windows.Forms.Label currentPathLabel;
     }
 }
 

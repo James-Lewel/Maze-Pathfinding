@@ -1,7 +1,9 @@
 ﻿using Maze.Helper;
+using Maze.Model;
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Maze
@@ -17,8 +19,8 @@ namespace Maze
         Point? endCellPosition;
 
         // Maze Rows x Columns
-        int row;
-        int column;
+        int maxRow = 0;
+        int maxColumn = 0;
 
         bool isManualMode = true;
 
@@ -32,6 +34,7 @@ namespace Maze
             manualRadioButton.Checked = true;
             manualRadioButton.Enabled = false;
             randomRadioButton.Enabled = false;
+
         }
 
         private void textBox_row_KeyPress(object sender, KeyPressEventArgs e)
@@ -56,7 +59,7 @@ namespace Maze
         {
             // Disables button
             generateGridButton.Enabled = false;
-
+            mazeHelper.outline = outline;
             // If true, sets default text to 0
             if (textBox_row.Text.Count() <= 0 || textBox_column.Text.Count() <= 0)
             {
@@ -65,22 +68,23 @@ namespace Maze
             }
 
             // Sets rows/columns
-            row = int.Parse(textBox_row.Text);
-            row = row > 0 ? row : 1;
-            column = int.Parse(textBox_column.Text);
-            column = column > 0 ? column : 1;
+            maxRow = int.Parse(textBox_row.Text);
+            maxRow = maxRow > 0 ? maxRow : 1;
+            maxColumn = int.Parse(textBox_column.Text);
+            maxColumn = maxColumn > 0 ? maxColumn : 1;
 
             // Resets position
+            mazeHelper.gridCells = null;
             startCellPosition = null;
             endCellPosition = null;
 
             // Creates a separate thread
-            mazeHelper.DrawMaze(mazeGrid, async () =>
+            mazeHelper.DrawGrid(mazeGrid, async () =>
             {
                 // Sets progress bar values
                 progressBar.Value = 0;
                 progressBar.Minimum = 0;
-                progressBar.Maximum = (row * column) + mazeGrid.Controls.Count;
+                progressBar.Maximum = (maxRow * maxColumn) + mazeGrid.Controls.Count;
                 progressBar.Visible = true;
                 progressBar.Style = ProgressBarStyle.Continuous;
 
@@ -98,19 +102,21 @@ namespace Maze
                     progressBar.Value++;
                 }
 
-                mazeGrid.RowCount = row;
-                mazeGrid.ColumnCount = column;
-                for (int i = 0; i < row; i++)
+                mazeHelper.maxRow = maxRow;
+                mazeHelper.maxColumn = maxColumn;
+                mazeGrid.RowCount = maxRow;
+                mazeGrid.ColumnCount = maxColumn;
+                for (int i = 0; i < maxRow; i++)
                 {
                     // Adds row to table layout panel
                     mazeGrid.RowStyles.Add(new RowStyle(SizeType.Percent, .50f));
-                    for (int j = 0; j < column; j++)
+                    for (int j = 0; j < maxColumn; j++)
                     {
                         // Adds column to table layout panel
                         mazeGrid.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, .50f));
 
                         // Adds control to table cells
-                        mazeGrid.Controls.Add(new Panel { Dock = DockStyle.Fill, Enabled = false });
+                        mazeGrid.Controls.Add(new Panel { Dock = DockStyle.Fill, Enabled = false, BackColor = Color.Transparent });
 
                         // Show progress
                         progressBar.Value++;
@@ -135,21 +141,40 @@ namespace Maze
 
         private void mazeGrid_MouseClick(object sender, MouseEventArgs e)
         {
-            if(isManualMode == false)
-            {
-                return;
-            }
-
             // Gets cell position on mouse click
-            var currentCellPosition = new Point(e.X / (mazeGrid.Width / mazeGrid.ColumnCount), 
+            Point? currentCellPosition = new Point(e.X / (mazeGrid.Width / mazeGrid.ColumnCount), 
                                                 e.Y / (mazeGrid.Height / mazeGrid.RowCount));
 
+            if (isManualMode == false)
+            {
+                switch (e.Button)
+                {
+                    case MouseButtons.Left:
+                        Cell temp = mazeHelper.gridCells[currentCellPosition.Value.X + currentCellPosition.Value.Y * maxColumn]; 
+                        MessageBox.Show("Grid cell: " + currentCellPosition.Value.X + currentCellPosition.Value.Y +
+                                        "\nTop : " + temp.walls["top"] + "\nBottom : " + temp.walls["bottom"] +
+                                        "\nLeft : " + temp.walls["left"] + "\nRight : " + temp.walls["right"]);
+                        break;
+
+                    case MouseButtons.Right:
+                        break;
+
+                    case MouseButtons.Middle:
+                        mazeHelper.DrawPath(currentCellPosition);
+                        currentPathLabel.Text = currentCellPosition != null ?
+                        "Current Path : " + startCellPosition.Value.X + ", " + startCellPosition.Value.Y + " to " +
+                        currentCellPosition.Value.X + ", " + currentCellPosition.Value.Y :
+                        "Current Path : ";
+                        break;
+                }
+                return;
+            }
             // Checks for mouse button
             switch (e.Button)
             {
                 case MouseButtons.Left:
                     // If start is placed in end then reset
-                    if (startCellPosition == endCellPosition)
+                    if (currentCellPosition == endCellPosition)
                     {
                         endCellPosition = null;
                     }
@@ -165,12 +190,17 @@ namespace Maze
                     {
                         positionHelper.PlaceStart(mazeGrid, startCellPosition, currentCellPosition);
                         startCellPosition = currentCellPosition;
+                        MessageBox.Show(startCellPosition.Value.ToString());
                     }
+
+                    startLabel.Text = startCellPosition != null ?
+                        "Start Position : " + "X - " + startCellPosition.Value.X + ",Y - " + startCellPosition.Value.Y :
+                        "Start Position : ";
                     break;
 
                 case MouseButtons.Right:
                     // If end is placed in start then reset
-                    if (endCellPosition == startCellPosition)
+                    if (currentCellPosition == startCellPosition)
                     {
                         startCellPosition = null;
                     }
@@ -186,7 +216,19 @@ namespace Maze
                     {
                         positionHelper.PlaceEnd(mazeGrid, endCellPosition, currentCellPosition);
                         endCellPosition = currentCellPosition;
+                        MessageBox.Show(endCellPosition.Value.ToString());
                     }
+
+                    endLabel.Text = endCellPosition != null ?
+                        "End Position : " + "X - " + endCellPosition.Value.X + ",Y - " + endCellPosition.Value.Y :
+                        "End Position : ";
+                    break;
+                case MouseButtons.Middle:
+                    mazeHelper.DrawPath(currentCellPosition);
+                    currentPathLabel.Text = currentCellPosition != null ?
+                    "Current Path : " + startCellPosition.Value.X + ", " + startCellPosition.Value.Y + " to " +
+                    currentCellPosition.Value.X + ", " + currentCellPosition.Value.Y :
+                    "Current Path : ";
                     break;
             }
         }
@@ -208,23 +250,93 @@ namespace Maze
             // Generates random point for start/end
             while (randomStartCellPosition == randomEndCellPosition)
             {
-                randomStartCellPosition = mazeHelper.GeneratePoint(row, column);
-                randomEndCellPosition = mazeHelper.GeneratePoint(row, column);
+                randomStartCellPosition = mazeHelper.GeneratePoint();
+                randomEndCellPosition = mazeHelper.GeneratePoint();
             }    
 
             // Applies color to cell
             positionHelper.RemoveStart(mazeGrid, startCellPosition);
             positionHelper.RemoveEnd(mazeGrid, endCellPosition);
+            startCellPosition = randomStartCellPosition;
+            endCellPosition = randomEndCellPosition;
             positionHelper.PlaceStart(mazeGrid, startCellPosition, randomStartCellPosition);
             positionHelper.PlaceEnd(mazeGrid, endCellPosition, randomEndCellPosition);
 
             // Sets new value for start/end
             startCellPosition = randomStartCellPosition;
             endCellPosition = randomEndCellPosition;
+
+            startLabel.Text = startCellPosition != null ?
+                        "Start Position : " + "X - " + startCellPosition.Value.X + ",Y - " + startCellPosition.Value.Y :
+                        "Start Position : ";
+
+            endLabel.Text = endCellPosition != null ?
+                "End Position : " + "X - " + endCellPosition.Value.X + ",Y - " + endCellPosition.Value.Y :
+                "End Position : ";
         }
 
         private void mazeGrid_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
         {
+        }
+
+        private void generateMazeButton_Click(object sender, EventArgs e)
+        {
+            if(startCellPosition == null)
+            {
+                MessageBox.Show("Place a start position!");
+                return;
+            }
+            if(endCellPosition == null)
+            {
+                MessageBox.Show("Place an end position!");
+                return;
+            }
+
+            mazeHelper.GenerateWalls(mazeGrid, startCellPosition, endCellPosition);
+        }
+
+        Graphics outline;
+        private void mazeGrid_Paint(object sender, PaintEventArgs e)
+        {
+            outline = e.Graphics;
+            
+            mazeHelper.DrawOutline(outline);
+        }
+
+        private void mazeGrid_MouseHover(object sender, EventArgs e)
+        {
+            if(startCellPosition == null)
+            {
+                return;
+            }
+            
+            // Gets cell position on mouse click
+            Point? currentCellPosition = new Point(Cursor.Position.X / (mazeGrid.Width / mazeGrid.ColumnCount), 
+                                                Cursor.Position.Y / (mazeGrid.Height / mazeGrid.RowCount));
+
+            currentPathLabel.Text = currentCellPosition != null ?
+            "Current Path : " + startCellPosition.Value.X + ", " + startCellPosition.Value.Y + " to " +
+            currentCellPosition.Value.X + ", " + currentCellPosition.Value.Y :
+            "Current Path : ";
+        }
+
+        private void mazeGrid_MouseLeave(object sender, EventArgs e)
+        {
+            // Gets cell position on mouse click
+            Point? currentCellPosition = new Point(Cursor.Position.X / (mazeGrid.Width / mazeGrid.ColumnCount),
+                                                Cursor.Position.Y / (mazeGrid.Height / mazeGrid.RowCount));
+
+            currentPathLabel.Text = "Current Path : ";
+        }
+
+        private void solveButton_Click(object sender, EventArgs e)
+        {
+            if (endCellPosition == null || startCellPosition == null) return;
+            mazeHelper.DrawPath(endCellPosition);
+            currentPathLabel.Text = endCellPosition != null ?
+                    "Current Path : " + startCellPosition.Value.X + ", " + startCellPosition.Value.Y + " to " +
+                    endCellPosition.Value.X + ", " + endCellPosition.Value.Y :
+                    "Current Path : ";
         }
     }
 }
